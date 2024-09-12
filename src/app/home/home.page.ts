@@ -8,26 +8,31 @@ import { NavigationExtras, Router } from '@angular/router';
 })
 export class HomePage {
 
-  username: string = 'user';
-  password: string = '1234';
+  username: string = '';
+  password: string = '';
   loginMessage!: string;
 
   constructor(private router: Router) {}
 
   Loginvalidate() {
-    console.log("Ejecutando validación");
+    console.log('Validando login');
 
-    if (this.username === 'admin' && this.password === 'admin') {
-      this.loginMessage = 'Login correcto';
+    
+    const storedUser = localStorage.getItem('registeredUser');
+    
+    if (storedUser) {
+      const user = JSON.parse(storedUser);
 
-      let extras: NavigationExtras = {
-        state: { user: this.username }
+
+      if (this.username === user.username && this.password === user.password) {
+        this.loginMessage = 'Login correcto';
+        
+        this.router.navigate(['/index'], { state: { user: this.username } });
+      } else {
+        this.loginMessage = 'Usuario o contraseña incorrectos';
       }
-
-      this.router.navigate(['/index'], extras);
-
     } else {
-      this.loginMessage = 'Login incorrecto';
+      this.loginMessage = 'No hay ningún usuario registrado';
     }
   }
 }
